@@ -96,7 +96,7 @@ function handleError(error, title, res, logger) {
  * @param {Object} reqParams the request parameters passed in to the service
  * @return {Object} the assembled request object
  */
-function assembleRequest(reqParams) {
+function assembleRequest(reqParams, reqQuery) {
     const extraParams = {
         mobile: reqParams.type === 'mobile',
         extdomain: reqParams.domain
@@ -114,20 +114,18 @@ function assembleRequest(reqParams) {
     }
 
     const request = app.mw_tpl.expand({
-        request: { params: Object.assign(extraParams, reqParams) }
-    });
-
-    if (request.query) {
-        // puppeteer does not support setting the query object,
-        // so we need to add it manually to the URI
-        const query = Object.keys(request.query)
-            .map(item => `${item}=${encodeURIComponent(request.query[item])}`)
-            .join('&');
-        if (/\?/.test(request.uri)) {
-            request.uri = `${request.uri}&${query}`;
-        } else {
-            request.uri = `${request.uri}?${query}`;
+        request: { 
+            params: Object.assign(extraParams, reqParams),
+            query: {...reqQuery}
         }
+    });
+    
+    if (request.query) {
+       const url = new URL(request.uri);
+        for (const [key, value] of Object.entries(request.query)) {
+            url.searchParams.append(key, value);
+        }
+        request.uri = url.toString();
     }
 
     return request;
@@ -140,7 +138,7 @@ function assembleRequest(reqParams) {
  * @return {QueueItem}
  */
 function buildQueueItem(req, logger) {
-    const request = assembleRequest(req.params);
+    const request = assembleRequest(req.params, req.query);
     const id = `${uuid.TimeUuid.now().toString()}|${req.params.domain}|${req.params.title}`;
     const renderer = new Renderer(
         app.conf.puppeteer_options,
@@ -155,8 +153,7 @@ function buildQueueItem(req, logger) {
         renderer,
         uri: request.uri,
         headers: request.headers,
-        format: req.params.format,
-        theme: req.params.theme
+        format: req.params.format
     };
     return new QueueItem(data);
 }
@@ -169,7 +166,6 @@ router.get('/:title', (req, res) => {
     // Move format and type from path params to query params
     req.params.format = req.query.format;
     req.params.type = req.query.type;
-    req.params.theme = req.query.theme;
 
     const requestsTypeMetric = app.metrics.makeMetric({
         type: 'Counter',
