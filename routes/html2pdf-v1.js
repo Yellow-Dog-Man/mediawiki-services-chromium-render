@@ -161,7 +161,7 @@ function buildQueueItem(req, logger) {
 /**
  * Returns PDF representation of the article
  */
-router.get('/:title', (req, res) => {
+router.get('/:title(*)', (req, res) => {
     const title = req.params.title;
     // Move format and type from path params to query params
     req.params.format = req.query.format;
