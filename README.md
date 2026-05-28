@@ -12,6 +12,8 @@ To prepare your local env:
 1. Configure local uid/gid in `.pipeline/blubber.yaml`
    * You can see your user/group id by running `id -u` and `id -g` in a local bash shell
    * This allows using local files for development that are mounted on docker instance as a volume
+   * See [Blubber Documentation](https://doc.wikimedia.org/releng/blubber/examples/02-defining-the-environment.html#customize-the-application-location-and-file-owner) for more information
+   * You can also set $MW_DOCKER_UID & $MW_DOCKER_GID
 2. Build the service image with `docker compose build`
 3. Install dependencies with `docker compose run proton npm install`
 4. Run the tests with `docker compose run proton npm test`
