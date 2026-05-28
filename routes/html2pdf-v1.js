@@ -169,6 +169,7 @@ router.get('/:title', (req, res) => {
     // Move format and type from path params to query params
     req.params.format = req.query.format;
     req.params.type = req.query.type;
+    req.params.theme = req.query.theme;
 
     const requestsTypeMetric = app.metrics.makeMetric({
         type: 'Counter',
