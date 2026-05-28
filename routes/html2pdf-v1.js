@@ -163,8 +163,11 @@ function buildQueueItem(req, logger) {
 /**
  * Returns PDF representation of the article
  */
-router.get('/:title/:format(letter|a4|legal)?/:type(mobile|desktop)?', (req, res) => {
+router.get('/:title', (req, res) => {
     const title = req.params.title;
+    // Move format and type from path params to query params
+    req.params.format = req.query.format;
+    req.params.type = req.query.type;
 
     const requestsTypeMetric = app.metrics.makeMetric({
         type: 'Counter',
