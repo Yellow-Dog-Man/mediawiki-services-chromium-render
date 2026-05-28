@@ -155,7 +155,8 @@ function buildQueueItem(req, logger) {
         renderer,
         uri: request.uri,
         headers: request.headers,
-        format: req.params.format
+        format: req.params.format,
+        theme: req.params.theme
     };
     return new QueueItem(data);
 }
