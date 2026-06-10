@@ -9,7 +9,7 @@ worker_heap_limit_mb: 250
 
 # Logger info
 logging:
-  level: info
+  level: trace
   streams:
   - type: stdout # log to stdout
     named_levels: true # emit log level name instead of index. e.g. INFO vs 30
