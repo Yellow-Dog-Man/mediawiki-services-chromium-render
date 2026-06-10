@@ -4,12 +4,9 @@ services:
       target: development
       context: .
       dockerfile: .pipeline/blubber.yaml
-      # TODO: The documentation said to place these in my blubber file
-      # Then I had to comment these out or the blank values of these would
-      # Overwrite the blubber ones.
-      # args:
-      #   LIVES_UID: $MW_DOCKER_UID
-      #   LIVES_GID: $MW_DOCKER_GID
+      args:
+        LIVES_UID: $MW_DOCKER_UID
+        LIVES_GID: $MW_DOCKER_GID
     volumes:
       - ./:/srv/service
     ports:
